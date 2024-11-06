@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package simpledb;
+
+service EdgeDB {
+  rpc SetData (Data) returns (Dummy);
+  rpc GetData (Data) returns (Data);
+}
+
+service EdgeReplica {
+    rpc Replicate (DataBlock) returns (DataBlock);
+}
+
+service RTE {
+    rpc Accept (AcceptBlock) returns (Dummy);
+}
+
+service EdgeCertification {
+    rpc Certify (Certificate) returns (Dummy);
+}
+
+message Data {
+    string key =1;
+    bytes value = 2;
+}
+
+message DataBlock{
+    int64 blockID = 1;
+    repeated Data block = 2;
+}
+
+message AcceptBlock {
+    DataBlock logdata = 1;
+    bytes digest = 2;
+    bytes signature = 3;
+}
+
+message Certificate {
+    int64 blockID =1;
+    bytes digest = 2;
+    Status status = 3;
+    bytes signature = 4;
+}
+
+enum Status {
+    ABORT = 0;
+    CERTIFY = 1;
+}
+
+message Dummy{}
