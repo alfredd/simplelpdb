@@ -8,7 +8,7 @@ service EdgeDB {
 }
 
 service EdgeReplica {
-    rpc Replicate (DataBlock) returns (DataBlock);
+    rpc Replicate (DataBlock) returns (Dummy);
 }
 
 service RTE {
