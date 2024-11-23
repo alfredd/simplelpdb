@@ -2,8 +2,8 @@ use tonic::{transport::Server, Request, Response, Status};
 use simpledb::{
     edge_db_server::{EdgeDb, EdgeDbServer},
     Data, Dummy, DataBlock,Certificate,
-    edge_replica_server::{EdgeReplica},
-    edge_certification_server::{EdgeCertification}
+    edge_replica_server::EdgeReplica,
+    edge_certification_server::EdgeCertification
 };
 
 pub mod simpledb {
@@ -11,7 +11,9 @@ pub mod simpledb {
 }
 
 #[derive(Debug, Default)]
-pub struct Edge {}
+pub struct Edge {
+    
+}
 
 #[tonic::async_trait]
 impl EdgeDb for Edge {
@@ -73,6 +75,5 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         .add_service(EdgeDbServer::new(edge_service))
         .serve(addr)
         .await?;
-
     Ok(())
 }

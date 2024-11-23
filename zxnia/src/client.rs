@@ -7,7 +7,6 @@ use simpledb::{
 pub mod simpledb {
     tonic::include_proto!("simpledb");
 }
-
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut client = EdgeDbClient::connect("http://[::1]:50051").await?;
