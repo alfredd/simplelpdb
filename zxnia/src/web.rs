@@ -1,20 +1,19 @@
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
+
+
 use warp::http::Response;
 use warp::Filter;
+use std::collections::HashMap;
 
 
-#[derive(Serialize, Deserialize)]
-struct WriteKeyRequest {
-    k: String,
-    v: String,
+
+mod zx_data_structures;
+use zx_data_structures::{WriteKeyRequest, Transaction};
+
+pub fn client_call() {
+    println!("Local file.")
 }
 
-#[derive(Serialize, Deserialize)]
-struct Transaction {
-    edge: HashMap<String, String>,
-    cloud: HashMap<String, String>,
-}
+
 
 #[tokio::main]
 async fn main() {
@@ -53,7 +52,7 @@ async fn main() {
             Response::builder().body(format!("Key={}, Value={}", p.k, p.v))
         });
 
-        
+
     // 4. POST /zx/txn/ {edge: {a:'bd', b:'sd', c:45}, cloud: {ca:43}}
     let post_txn = warp::post()
         .and(warp::path("txn"))
@@ -62,6 +61,8 @@ async fn main() {
         .map(|txn: Transaction|{
             warp::reply::json(&txn)
         });
+    
+        // edge_client::client_call();
 
     // Setup Routes
     let routes = warp::get()
