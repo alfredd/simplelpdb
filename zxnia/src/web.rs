@@ -9,11 +9,6 @@ use std::collections::HashMap;
 mod zx_data_structures;
 use zx_data_structures::{WriteKeyRequest, Transaction};
 
-pub fn client_call() {
-    println!("Local file.")
-}
-
-
 
 #[tokio::main]
 async fn main() {
