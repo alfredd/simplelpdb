@@ -1,7 +1,3 @@
-use core::fmt;
-use std::future::{Future, IntoFuture};
-
-use serde::de::value;
 // use tonic::{transport::Server, Request, Response, Status};
 use simpledb::{
     edge_db_client::{EdgeDbClient},
@@ -11,23 +7,24 @@ use simpledb::{
 mod zx_data_structures;
 use tonic::{client, transport::Channel};
 use zx_data_structures::{Transaction, WriteKeyRequest};
+use log::{info, warn, error};
 
 mod simpledb {
     tonic::include_proto!("simpledb");
 }
 
 pub struct EdgeClient {
-    EDGE_CLIENT_ADDRESS: String
+    edge_client_address: String
 }
 
 impl EdgeClient {
-    pub fn new() -> EdgeClient {
+    pub fn new(addr:String) -> EdgeClient {
         EdgeClient {
-            EDGE_CLIENT_ADDRESS: "http://[::1]:50051".into(),
+            edge_client_address: addr,
         }
     }
     async fn get_client(&self) -> Result<EdgeDbClient<Channel>, Box<dyn std::error::Error>> {
-        let client = EdgeDbClient::connect(self.EDGE_CLIENT_ADDRESS.clone()).await?;
+        let client = EdgeDbClient::connect(self.edge_client_address.clone()).await?;
         Ok(client)
     }
 
@@ -46,7 +43,7 @@ impl EdgeClient {
     pub async fn read_key(&self, key:String) -> Result<String, Box<dyn std::error::Error>>   {
         let mut client = self.get_client().await?;
         let request = EdgeClient::generate_empty_data_request_object(key, "".into());
-
+        info!("sending request to edge to read data: {:?}", request);
         let response = client.get_data(request).await?;
         let result = response.into_inner().value;
         Ok(result)
@@ -56,6 +53,7 @@ impl EdgeClient {
     pub async fn write_key(&self, wr: WriteKeyRequest) -> Result<(), Box<dyn std::error::Error>> {
         let mut client =self.get_client().await?;
         let request = EdgeClient::generate_empty_data_request_object(wr.k, wr.v);
+        info!("sending request to edge to write data: {:?}", request);
         let response = client.set_data(request).await?;
         println!("Response {:?}", response);
         Ok(())
@@ -85,7 +83,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     // let response = client.get_data(request).await?;
 
     // println!("RESPONSE={:?}", response);
-    let eclient = EdgeClient::new();
+    let eclient = EdgeClient::new("http://[::1]:50051".into());
     eclient.write_key(WriteKeyRequest{
         k:"Test".into(),
         v: "B".into(),
