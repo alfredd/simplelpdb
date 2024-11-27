@@ -1,20 +1,41 @@
 
-use warp::{Filter, Rejection, Reply};
+use std::fmt::format;
+
+use tonic::Response;
+use warp::{reject, Filter, Rejection, Reply};
 
 mod zx_data_structures;
+mod client;
 use zx_data_structures::{Transaction, WriteKeyRequest};
+use client::EdgeClient;
 
-// mod client;
-// use client::EdgeClient;
+
+static EDGE_CLIENT_ADDR : &'static str = "http://[::1]:50051";
 
 async fn read_handler(name: String) -> Result<impl Reply, Rejection> {
     println!("Executing code from a handler function.");
-    Ok(format!("Hello, {}!", name))
+    let client = EdgeClient::new(EDGE_CLIENT_ADDR.into());
+    if let Ok(result) = client.read_key(name.clone()).await {
+        println!("Result is {}", result);
+        Ok(format!("Hello, {}!", result))
+    } else {
+        println!("Error");
+        Err(reject::not_found())
+    }
+    
 }
 
 async fn write_handler(wr: WriteKeyRequest) -> Result<impl Reply, Rejection> {
     let response = format!("Write value for k={}, v={}", wr.k, wr.v);
-    Ok(warp::reply::html(response))
+    println!("Request received: {}", response);
+    let client = EdgeClient::new(EDGE_CLIENT_ADDR.into());
+    match client.write_key(wr).await {
+        Ok(_) => return Ok(format!("Result written successfully: {}", response )),
+        Err(_) => {
+            println!("Error when trying to write.");
+            return Err(reject::not_found());
+        }
+    }
 }
 
 async fn txn_handler(txn: Transaction) -> Result<impl Reply, Rejection> {

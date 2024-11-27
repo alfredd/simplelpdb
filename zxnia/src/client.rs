@@ -4,9 +4,9 @@ use simpledb::{
     Data,
 };
 
-mod zx_data_structures;
 use tonic::{client, transport::Channel};
-use zx_data_structures::{Transaction, WriteKeyRequest};
+use crate::zx_data_structures::{Transaction, WriteKeyRequest};
+
 use log::{info, warn, error};
 
 mod simpledb {
@@ -60,38 +60,38 @@ impl EdgeClient {
     }
 }
 
-#[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // let mut client = EdgeDbClient::connect("http://[::1]:50051").await?;
+// #[tokio::main]
+// async fn main() -> Result<(), Box<dyn std::error::Error>> {
+//     // let mut client = EdgeDbClient::connect("http://[::1]:50051").await?;
 
-    // let request = tonic::Request::new(Data {
-    //     key: "Zxnia".into(),
-    //     value: "".into(),
-    // });
+//     // let request = tonic::Request::new(Data {
+//     //     key: "Zxnia".into(),
+//     //     value: "".into(),
+//     // });
 
-    // println!("Sending set_data request to gRPC Server...");
-    // let response = client.set_data(request).await?;
+//     // println!("Sending set_data request to gRPC Server...");
+//     // let response = client.set_data(request).await?;
 
-    // println!("RESPONSE={:?}", response);
+//     // println!("RESPONSE={:?}", response);
 
-    // println!("Sending get_data request to gRPC Server...");
+//     // println!("Sending get_data request to gRPC Server...");
 
-    // let request = tonic::Request::new(Data {
-    //     key: "Zxnia".into(),
-    //     value: "".into(),
-    // });
-    // let response = client.get_data(request).await?;
+//     // let request = tonic::Request::new(Data {
+//     //     key: "Zxnia".into(),
+//     //     value: "".into(),
+//     // });
+//     // let response = client.get_data(request).await?;
 
-    // println!("RESPONSE={:?}", response);
-    let eclient = EdgeClient::new("http://[::1]:50051".into());
-    eclient.write_key(WriteKeyRequest{
-        k:"Test".into(),
-        v: "B".into(),
-    }).await?;
+//     // println!("RESPONSE={:?}", response);
+//     let eclient = EdgeClient::new("http://[::1]:50051".into());
+//     eclient.write_key(WriteKeyRequest{
+//         k:"Test".into(),
+//         v: "B".into(),
+//     }).await?;
 
-    let response = eclient.read_key("Test".into()).await?;
+//     let response = eclient.read_key("Test".into()).await?;
 
-    println!("Response of Read: {:?}", response);
+//     println!("Response of Read: {:?}", response);
 
-    Ok(())
-}
+//     Ok(())
+// }

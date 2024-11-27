@@ -16,13 +16,17 @@ log = "0.4"
 [build-dependencies]
 tonic-build = "0.7"
 
+[[bin]] # Bin to run the HelloWorld gRPC client
+name = "ec"
+path = "src/cxc/edge_client.rs"
+
 [[bin]] # Bin to run the HelloWorld gRPC server
 name = "edge"
 path = "src/edge.rs"
 
-[[bin]] # Bin to run the HelloWorld gRPC client
-name = "client"
-path = "src/client.rs"
+#[[bin]] # Bin to run the HelloWorld gRPC client
+#name = "client"
+#path = "src/client.rs"
 
 [[bin]] # Bin to run the HelloWorld gRPC client
 name = "rte"
