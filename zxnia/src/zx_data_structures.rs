@@ -9,6 +9,11 @@ pub struct WriteKeyRequest {
 }
 
 #[derive(Serialize, Deserialize)]
+pub struct ReadRequest {
+    pub k: String
+}
+
+#[derive(Serialize, Deserialize)]
 pub struct Transaction {
     pub edge: HashMap<String, String>,
     pub cloud: HashMap<String, String>,

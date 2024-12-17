@@ -6,16 +6,16 @@ use warp::{reject, Filter, Rejection, Reply};
 
 mod zx_data_structures;
 mod client;
-use zx_data_structures::{Transaction, WriteKeyRequest};
+use zx_data_structures::{ReadRequest, Transaction, WriteKeyRequest};
 use client::EdgeClient;
 
 
 static EDGE_CLIENT_ADDR : &'static str = "http://[::1]:50051";
 
-async fn read_handler(name: String) -> Result<impl Reply, Rejection> {
+async fn read_handler(name: ReadRequest) -> Result<impl Reply, Rejection> {
     println!("Executing code from a handler function.");
     let client = EdgeClient::new(EDGE_CLIENT_ADDR.into());
-    if let Ok(result) = client.read_key(name.clone()).await {
+    if let Ok(result) = client.read_key(name.k.clone()).await {
         println!("Result is {}", result);
         Ok(format!("Hello, {}!", result))
     } else {
@@ -67,7 +67,7 @@ async fn main() {
     //      read key k
     let read_key = warp::get()
         .and(warp::path("read"))
-        .and(warp::path::param::<String>())
+        .and(warp::query::<ReadRequest>())
         .and_then(read_handler);
 
     // 3. PUT /zx/write?k=KEY&v=VALUE
